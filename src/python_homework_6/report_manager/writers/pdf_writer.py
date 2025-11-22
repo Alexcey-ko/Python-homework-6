@@ -10,7 +10,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
-from python_homework_6.report_manager.base.base_writer import BaseWriter
+from report_manager.base.base_writer import BaseWriter
 
 
 class PdfWriter(BaseWriter):
@@ -43,8 +43,8 @@ class PdfWriter(BaseWriter):
         self._pdf_canvas = None
         #Регистрирация шрифта Arial для кириллицы
         #Путь к шрифту относительно корня проекта
-        base_dir = Path(__file__).resolve().parent.parent.parent.parent
-        arial_path = base_dir / 'fonts' / 'Arial.ttf'
+        base_dir = Path(__file__).resolve().parent.parent
+        arial_path = base_dir / 'assets' / 'fonts' / 'Arial.ttf'
         pdfmetrics.registerFont(TTFont('Arial', arial_path))
 
     def create_file(self):

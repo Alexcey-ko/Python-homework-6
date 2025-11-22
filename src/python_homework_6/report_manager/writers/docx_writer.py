@@ -6,7 +6,7 @@
 from docx import Document
 from docx.shared import Mm
 
-from python_homework_6.report_manager.base.base_writer import BaseWriter
+from report_manager.base.base_writer import BaseWriter
 
 
 class DocxWriter(BaseWriter):

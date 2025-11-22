@@ -5,7 +5,7 @@
 
 import json
 
-from python_homework_6.report_manager.base.base_writer import BaseWriter
+from report_manager.base.base_writer import BaseWriter
 
 
 class JsonWriter(BaseWriter):

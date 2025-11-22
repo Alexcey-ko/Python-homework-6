@@ -6,7 +6,7 @@
 from openpyxl import Workbook
 from openpyxl.styles import Border, Font, Side
 
-from python_homework_6.report_manager.base.base_writer import BaseWriter
+from report_manager.base.base_writer import BaseWriter
 
 
 class XlsxWriter(BaseWriter):
