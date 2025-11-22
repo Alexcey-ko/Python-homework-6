@@ -1,17 +1,20 @@
-"""Модуль для вывода отчета о структуре каталога в формате PDF
+"""Модуль для вывода отчета о структуре каталога в формате PDF.
 
-Содержит класс PdfWriter
+Содержит класс PdfWriter.
 """
 
 from pathlib import Path
-from reportlab.pdfgen import canvas
-from reportlab.pdfbase import pdfmetrics
+
 from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from ..base.base_writer import BaseWriter
+from reportlab.pdfgen import canvas
+
+from python_homework_6.report_manager.base.base_writer import BaseWriter
+
 
 class PdfWriter(BaseWriter):
-    """Класс Writer для создания отчета в PDF формате"""
+    """Класс Writer для создания отчета в PDF формате."""
 
     #Размер шрифта заголовка
     HEADER_FONTSIZE = 14 
@@ -27,14 +30,12 @@ class PdfWriter(BaseWriter):
     BOTTOM = 20
 
     def __init__(self, report_path, dir_path):
-        """Инициализация параметров вывода PDF файла.
-        Регистрация шрифта для вывода текста.
+        """Инициализация параметров вывода PDF файла. Регистрация шрифта для вывода текста.
 
         Args:
             report_path (str): путь для создания файла отчета
             dir_path (str): путь анализируемого каталога
         """
-
         super().__init__(report_path, dir_path)
         #Постраничный список операций для рендера
         self._pages_ops = [[]]
@@ -47,9 +48,7 @@ class PdfWriter(BaseWriter):
         pdfmetrics.registerFont(TTFont('Arial', arial_path))
 
     def create_file(self):
-        """Создание Canvas для отрисовки документа и
-        вывод заголовка документа."""
-
+        """Создание Canvas для отрисовки документа и вывод заголовка документа."""
         #Создание PDF canvas с размером страниц A4
         self._pdf_canvas = canvas.Canvas(self._report_path.as_posix(), pagesize = A4)
         
@@ -84,15 +83,13 @@ class PdfWriter(BaseWriter):
         self._last_y = first_node[1]
 
     def write_to_file(self, name, size, last_changed):
-        """Формирование списка операций для дальнейшей отрисовки 
-        информации о файле/папке 
+        """Формирование списка операций для дальнейшей отрисовки информации о файле/папке.
 
         Args:
             name (str): имя файла/папки
             size (str): размера файла в читаемом формате
             last_changed (str): дата последнего изменения в читаемом формате
         """
-
         #Определение глубины файла/папки относительно корневого каталога
         path = Path(name)
         relative_path = path.relative_to(self._dir_path)
@@ -160,14 +157,13 @@ class PdfWriter(BaseWriter):
         self._deep_level = new_deep_level
         
     def save_file(self):
-        """Отрисовка всех операций и сохранение файла отчета"""
+        """Отрисовка всех операций и сохранение файла отчета."""
         #Сохранение PDF документа
         self._render_canvas()
         self._pdf_canvas.save()
 
     def _render_canvas(self):
         """Постраничная отрисовка всех операций."""
-
         for page_ops in self._pages_ops:
             #Параметры вывода структуры
             self._pdf_canvas.setFont('Arial', type(self).BODY_FONTSIZE)

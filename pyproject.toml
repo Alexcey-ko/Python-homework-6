@@ -6,8 +6,12 @@ authors = [
     {name = "Alexcey-ko",email = "alexceyko2@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<4"
 dependencies = [
+    "openpyxl (>=3.1.5,<4.0.0)",
+    "reportlab (>=4.4.5,<5.0.0)",
+    "docx (>=0.2.4,<0.3.0)",
+    "ruff (>=0.14.6,<0.15.0)"
 ]
 
 [tool.poetry]

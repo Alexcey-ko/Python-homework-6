@@ -1,12 +1,13 @@
 """ДЗ №6. Работа с файлами и контекстными менеджерами."""
 
 import argparse
+
 from report_manager import ReportManager
 
 #Агрументы командной строки
-parser = argparse.ArgumentParser(description="Анализатор каталогов")
-parser.add_argument("--path", "-p", type=str,default=".", help="Путь к анализируемому каталогу")
-parser.add_argument("--report", "-r", type=str,default="./report.pdf", help="Путь к файлу отчета")
+parser = argparse.ArgumentParser(description = 'Анализатор каталогов')
+parser.add_argument('--path', '-p', type=str,default='.', help='Путь к анализируемому каталогу')
+parser.add_argument('--report', '-r', type=str,default='./report.pdf', help='Путь к файлу отчета')
 arg_val = parser.parse_args()
 
 try:

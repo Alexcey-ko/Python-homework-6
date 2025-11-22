@@ -1,27 +1,37 @@
-"""Модуль для вывода отчета о структуре каталога в формате CSV
+"""Модуль для вывода отчета о структуре каталога в формате CSV.
 
 Содержит класс CsvWriter
 """
 
-from ..base.base_writer import BaseWriter
 import csv
 
+from python_homework_6.report_manager.base.base_writer import BaseWriter
+
+
 class CsvWriter(BaseWriter):
-    """Класс Writer для создания отчета в CSV формате"""
+    """Класс Writer для создания отчета в CSV формате."""
     
     def __init__(self, report_path, dir_path):
+        """Инициализация объекта класса.
+
+        Args:
+            report_path (str): путь к файлу отчету 
+            dir_path (str): путь к исследуемому каталогу
+        """
         super().__init__(report_path, dir_path)
         self._csv_file = None
         self._csv_writer = None
 
     def create_file(self):
-        """Создание файла"""
-        self._csv_file = open(self._report_path, 'w', encoding = 'utf-8')
-        self._csv_writer = csv.writer(self._csv_file, delimiter = ";")
+        """Создание файла."""
+        #Открытие файла не через контекстный менеджер нужно, потому что
+        #данные в файл выводятся в другом методе write_to_file. Файл закрывается в методе save_file()
+        self._csv_file = open(self._report_path, 'w', encoding = 'utf-8')  # noqa: PTH123, SIM115
+        self._csv_writer = csv.writer(self._csv_file, delimiter = ';')
         self._csv_writer.writerow(['Имя файла', 'Размер', 'Последнее изменение'])
 
     def write_to_file(self, name, size, last_changed):
-        """Сбор CSV данных
+        """Сбор CSV данных.
         
         Args:
             name (str): имя файла/папки
@@ -31,5 +41,5 @@ class CsvWriter(BaseWriter):
         self._csv_writer.writerow([str(name), str(size), str(last_changed)])
         
     def save_file(self):
-        """Сохранение файла"""
+        """Сохранение файла."""
         self._csv_file.close()

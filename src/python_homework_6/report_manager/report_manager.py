@@ -1,35 +1,39 @@
-"""Модуль для работы со структурой каталога и составления отчета
+"""Модуль для работы со структурой каталога и составления отчета.
 
 Содержит классы ReportType(Enum) и ReportManager
 """
 
+import datetime
 from enum import Enum
 from pathlib import Path
-from zipfile import ZipFile, BadZipFile
-import datetime
-from .writers import DocxWriter, XlsxWriter, PdfWriter, JsonWriter, CsvWriter
+from zipfile import BadZipFile, ZipFile
+
+from .writers import CsvWriter, DocxWriter, JsonWriter, PdfWriter, XlsxWriter
+
 
 class ReportType(Enum):
-    """Набор значений "Тип отчета" - допустимые форматы
-    для вывода отчета по структуре каталога
+    """Набор значений "Тип отчета" - допустимые форматы для вывода отчета по структуре каталога.
 
     Args:
         Enum (str): формат файла
     """
-    DOCX = "docx"
-    XLSX = "xlsx"
-    PDF  = "pdf"
-    CSV  = "csv"
-    JSON = "json"
+    DOCX = 'docx'
+    XLSX = 'xlsx'
+    PDF  = 'pdf'
+    CSV  = 'csv'
+    JSON = 'json'
 
 class ReportManager():
-    """Класс структуры каталога, предоставляющий функционал для
-    вывода информации о структуре указанного каталога со всеми вложенными
-    папками/файлами. Отчет формируется в нескольких форматах в зависимости
-    от типа отчета ReportType, определяемого расширением файла"""
+    """Класс структуры каталога.
+    
+    Класс предоставляет функционал для вывода информации о структуре указанного 
+    каталога со всеми вложенными папками/файлами. Отчет формируется в нескольких 
+    форматах в зависимости от типа отчета ReportType, определяемого расширением файла
+    """
 
     def __init__(self, path, report):
         """Инициализация и проверка корректности пути к каталогу и пути для файла отчета.
+
         Здесь также определяется тип отчета по расширению файла.
 
         Args:
@@ -50,7 +54,7 @@ class ReportManager():
         self.__report_type = self.__get_report_type_by_extension(self.__file_report.suffix)
 
     def __get_report_type_by_extension(self, extension:str)->ReportType:
-        """Получение типа отчета по расширению файла отчета
+        """Получение типа отчета по расширению файла отчета.
 
         Args:
             extension (str): расширение файла отчета
@@ -61,25 +65,23 @@ class ReportManager():
         Returns:
             ReportType: тип отчета
         """
-
         extension = extension.lower()
         try:
             return ReportType(extension[1:] if extension[0] == '.' else extension)
-        except ValueError:
-            raise ValueError(f'Недопустимый тип отчета: {extension}')
-        
+        except ValueError as err:
+            raise ValueError(f'Недопустимый тип отчета {extension}') from err
+
     def make_report(self):
-        """Создание файла отчета с выводом в него информации о всех файлах/папках
+        """Создание файла отчета с выводом в него информации о всех файлах/папках.
 
         Raises:
             ValueError: неизвестный тип отчета
         """
-
         #Создание всех промежуточных папок, если их нет
         self.__file_report.parent.mkdir(parents=True, exist_ok=True)
 
         #Словарь Writer'ов
-        REPORT_WRITERS = {
+        reprort_writers = {
             ReportType.DOCX: DocxWriter,
             ReportType.XLSX: XlsxWriter,
             ReportType.CSV: CsvWriter,
@@ -89,9 +91,9 @@ class ReportManager():
 
         #Класс Writer'а
         try:
-            writer_class = REPORT_WRITERS[self.__report_type]
-        except KeyError:
-            raise ValueError(f"Writer для типа отчета {self.__report_type} не реализован")
+            writer_class = reprort_writers[self.__report_type]
+        except KeyError as err:
+            raise ValueError(f'Writer для типа отчета {self.__report_type} не реализован') from err
 
         #Создание Writer'а и вывод файла отчета
         writer = writer_class(self.__file_report, self.__file_path)
@@ -100,12 +102,11 @@ class ReportManager():
         writer.save_file()
 
     def __write_dir_structure(self, write_func):
-        """Проход всех вложенных в каталог файлов и папок, в том числе ZIP
+        """Проход всех вложенных в каталог файлов и папок, в том числе ZIP.
 
         Args:
             write_func (func): функция-writer, выводящая информацию о файле/папке в отчет
         """
-
         #Рекурсивный перебор структуры каталога
         #Сортировка нужна, чтобы выводить папку + все файлы из папки подряд
         for file in sorted(self.__file_path.rglob('*')): 
@@ -148,7 +149,7 @@ class ReportManager():
                                 zip_items.append({
                                     'path': zitem_path,
                                     'is_dir': info.is_dir(),
-                                    'size': "ПАПКА" if info.is_dir() else self.__readable_size(info.file_size),
+                                    'size': 'ПАПКА' if info.is_dir() else self.__readable_size(info.file_size),
                                     'mtime': datetime.datetime(*info.date_time)
                                 })
                         #Сортировка по путям к файлу, чтобы выводить файлы по папкам
@@ -160,8 +161,8 @@ class ReportManager():
                 except BadZipFile:
                     print(f'{file} - поврежденный .zip')
 
-    def __readable_size(self, bytes):
-        """Преобразование размера файла в читаемый формат
+    def __readable_size(self, size_bytes):
+        """Преобразование размера файла в читаемый формат.
 
         Args:
             bytes (int): количество байт
@@ -170,7 +171,7 @@ class ReportManager():
             str: размер файла в читаемом формате
         """
         for unit in ['Б', 'КБ', 'МБ']:
-            if bytes < 1024:
-                return f'{bytes:.2f}{unit}'
-            bytes /= 1024
-        return f'{bytes:.2f}ГБ'
+            if size_bytes < 1024:
+                return f'{size_bytes:.2f}{unit}'
+            size_bytes /= 1024
+        return f'{size_bytes:.2f}ГБ'
