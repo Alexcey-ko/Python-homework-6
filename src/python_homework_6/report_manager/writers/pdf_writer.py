@@ -42,8 +42,8 @@ class PdfWriter(BaseWriter):
         self._pdf_canvas = None
         #Регистрирация шрифта Arial для кириллицы
         #Путь к шрифту относительно корня проекта
-        base_dir = Path(__file__).resolve().parent.parent.parent
-        arial_path = base_dir / 'resources' / 'fonts' / 'Arial.ttf'
+        base_dir = Path(__file__).resolve().parent.parent.parent.parent
+        arial_path = base_dir / 'fonts' / 'Arial.ttf'
         pdfmetrics.registerFont(TTFont('Arial', arial_path))
 
     def create_file(self):
